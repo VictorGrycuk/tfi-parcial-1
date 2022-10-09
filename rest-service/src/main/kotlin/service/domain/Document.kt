@@ -5,6 +5,7 @@ import java.util.*
 
 data class Document(
     val id: UUID = UUID.randomUUID(),
+    val filename: String = "",
     val content: String = "",
     val priority: Int = 1
 ) {

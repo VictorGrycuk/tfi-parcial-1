@@ -5,13 +5,20 @@ import service.infrastructure.inbound.exceptions.EmptyContentException
 import service.infrastructure.inbound.exceptions.PriorityOutOfRangeException
 
 data class PrintRequest(
+    val filename: String,
     val content: String,
     val priority: Int = 1
 ) {
     fun toDocument(): Document {
         validatePriorityRange()
         validateContent()
-        return Document(content = content, priority = priority)
+        validateFilename()
+        return Document(content = content, priority = priority, filename = filename)
+    }
+
+    private fun validateFilename() {
+        if(content.isEmpty())
+            throw InvalidFilenameException("Filename can not be empty")
     }
 
     private fun validateContent() {
