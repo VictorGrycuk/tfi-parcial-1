@@ -11,7 +11,7 @@ import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import service.domain.ServerInterface
-import service.infrastructure.inbound.ktor.dto.PrintRequest
+import service.infrastructure.inbound.dto.PrintRequest
 import service.infrastructure.outbound.rabbitmq.RabbitService
 import service.modules.Actions
 import java.time.Duration
@@ -34,9 +34,8 @@ object Server {
 
                 post("/print") {
                     try {
-                        val request = call.receive<PrintRequest>()
-                        Actions.print(request.toDocument())
-                        call.respond(HttpStatusCode.Accepted, "document queued")
+                        val id = Actions.print(call.receive<PrintRequest>().toDocument())
+                        call.respond(HttpStatusCode.Accepted, "Document queued as id $id")
 
                     } catch (ex: Exception) {
                         call.respond(HttpStatusCode.BadRequest, ex.message!!)

@@ -1,4 +1,4 @@
-package service.infrastructure.inbound.ktor.dto
+package service.infrastructure.inbound.dto
 
 import service.domain.Document
 import service.infrastructure.inbound.exceptions.PriorityOutOfRangeException
