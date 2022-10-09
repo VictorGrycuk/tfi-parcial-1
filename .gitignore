@@ -2,3 +2,7 @@
 /rest-service/.idea/
 /rest-service/build/
 /rest-service/out/
+/print-server/.gradle/
+/print-server/.idea/
+/print-server/build/
+/print-server/out/
