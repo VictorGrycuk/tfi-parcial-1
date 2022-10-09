@@ -14,7 +14,6 @@ import service.domain.ServerInterface
 import service.infrastructure.inbound.ktor.dto.PrintRequest
 import service.infrastructure.outbound.rabbitmq.RabbitService
 import service.modules.Actions
-import java.lang.Exception
 import java.time.Duration
 
 object Server {
@@ -37,9 +36,10 @@ object Server {
                     try {
                         val request = call.receive<PrintRequest>()
                         Actions.print(request.toDocument())
+                        call.respond(HttpStatusCode.Accepted, "document queued")
 
                     } catch (ex: Exception) {
-                        print(ex.message)
+                        call.respond(HttpStatusCode.BadRequest, ex.message!!)
                     }
                 }
             }
