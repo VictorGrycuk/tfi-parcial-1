@@ -13,6 +13,6 @@ class RabbitMessageRepository: MessageRepository {
     }
 
     override fun publish(document: Document) {
-        channel.basicPublish("impressionExchange", "key", null, document.toString().toByteArray())
+        channel.basicPublish("impressionExchange", "key", null, document.toJson().toByteArray())
     }
 }
