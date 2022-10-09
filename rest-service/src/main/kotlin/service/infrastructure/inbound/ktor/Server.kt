@@ -30,7 +30,9 @@ object Server {
             }
 
             routing {
-                RabbitService().defaultExchangeAndQueue()
+                RabbitService()
+                    .queueForPrintServer()
+                    .listenForPrintServer()
 
                 post("/print") {
                     try {

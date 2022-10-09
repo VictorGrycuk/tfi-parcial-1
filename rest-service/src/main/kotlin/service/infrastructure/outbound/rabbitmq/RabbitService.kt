@@ -1,9 +1,12 @@
 package service.infrastructure.outbound.rabbitmq
 
+import com.rabbitmq.client.CancelCallback
 import com.rabbitmq.client.ConnectionFactory
+import com.rabbitmq.client.DeliverCallback
 
 class RabbitService {
     private val connectionFactory: ConnectionFactory = ConnectionFactory()
+    private val channel = ConnectionFactory().newConnection().createChannel()
 
     init {
         connectionFactory.host = "localhost"
@@ -13,19 +16,31 @@ class RabbitService {
         connectionFactory.password = "guest"
     }
 
-    fun getFactory(): ConnectionFactory {
-        return connectionFactory
-    }
-
-    fun defaultExchangeAndQueue() {
-        val newConnection = getFactory().newConnection()
-        val channel = newConnection.createChannel()
+    fun queueForPrintServer(): RabbitService {
 
         channel.exchangeDeclare("impressionExchange", "direct", true)
         channel.queueDeclare("impressionQueue", true, false, true, emptyMap())
         channel.queueBind("impressionQueue", "impressionExchange", "key")
 
-        channel.close()
-        newConnection.close()
+        channel.exchangeDeclare("resultExchange", "direct", true)
+        channel.queueDeclare("resultQueue", true, false, true, emptyMap())
+        channel.queueBind("resultQueue", "resultExchange", "key")
+
+        return this
+    }
+
+    fun listenForPrintServer() {
+        val deliverCallback = DeliverCallback { consumerTag, message ->
+            println(String(message.body))
+        }
+        val cancelCallback = CancelCallback { consumerTag -> print("Cancelled: $consumerTag") }
+
+        channel.basicConsume("resultQueue", true, deliverCallback, cancelCallback)
+//        channel.close()
+//        connection.close()
+    }
+
+    fun publish(data: ByteArray) {
+        channel.basicPublish("impressionExchange", "key", null, data)
     }
 }
