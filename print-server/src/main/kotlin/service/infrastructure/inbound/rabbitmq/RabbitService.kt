@@ -38,7 +38,7 @@ class RabbitService {
                 val document = Document.fromJson(String(message.body))
 
                 // De momento, si catcheo la excepción, se deja de escuchar la conexión
-                if (document.filename != "invalid name") {
+                if (!document.id.toString().endsWith("0") || !document.id.toString().endsWith("a")) {
                     val result = printDocument(document)
                     channel.basicPublish("resultExchange", "key", null, result.toByteArray())
                 }
