@@ -38,10 +38,12 @@ class RabbitService {
                 val document = Document.fromJson(String(message.body))
 
                 // De momento, si catcheo la excepción, se deja de escuchar la conexión
-                if (!document.id.toString().endsWith("0") || !document.id.toString().endsWith("a")) {
+                if ((0..3).random() != 0) {
                     val result = printDocument(document)
                     channel.basicPublish("resultExchange", "key", null, result.toByteArray())
-                }
+                } else (
+                    println("document ${document.id} not printed")
+                )
             } catch (ex: Exception) {
                 // No hacemos nada
             }
