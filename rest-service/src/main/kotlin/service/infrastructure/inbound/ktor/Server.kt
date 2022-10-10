@@ -11,6 +11,7 @@ import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import service.domain.ServerInterface
+import service.infrastructure.inbound.dto.PrintLog
 import service.infrastructure.inbound.exceptions.LogNotFoundException
 import service.infrastructure.inbound.dto.PrintRequest
 import service.infrastructure.inbound.dto.QueuedResponse
@@ -49,12 +50,13 @@ object Server {
                 }
 
                 get("/getStatus") {
+                    var id: UUID = UUID.randomUUID()
                     try {
-                        val id = call.request.queryParameters["id"]
-                        val log = Actions.getStatus(UUID.fromString(id))
+                        id = UUID.fromString(call.request.queryParameters["id"])
+                        val log = Actions.getStatus(id)
                         call.respond(HttpStatusCode.OK, log)
                     } catch (ex: LogNotFoundException) {
-                        call.respond(HttpStatusCode.NotFound, ex.message)
+                        call.respond(HttpStatusCode.NotFound, PrintLog(id = id, result = "Not Found"))
                     } catch (ex: Exception) {
                         call.respond(HttpStatusCode.InternalServerError, ex.message!!)
                     }
