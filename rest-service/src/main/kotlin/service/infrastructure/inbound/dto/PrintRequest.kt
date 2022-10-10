@@ -2,6 +2,7 @@ package service.infrastructure.inbound.dto
 
 import service.domain.Document
 import service.infrastructure.inbound.exceptions.EmptyContentException
+import service.infrastructure.inbound.exceptions.InvalidFilenameException
 import service.infrastructure.inbound.exceptions.PriorityOutOfRangeException
 
 data class PrintRequest(

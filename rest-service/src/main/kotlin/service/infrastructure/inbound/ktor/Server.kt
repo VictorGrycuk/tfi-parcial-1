@@ -11,10 +11,13 @@ import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import service.domain.ServerInterface
+import service.infrastructure.inbound.exceptions.LogNotFoundException
 import service.infrastructure.inbound.dto.PrintRequest
 import service.infrastructure.outbound.rabbitmq.RabbitService
 import service.modules.Actions
+import service.modules.Repositories
 import java.time.Duration
+import java.util.*
 
 object Server {
     fun getServer(serverConfig: ServerConfiguration, serverDI: ServerDI): ServerInterface {
@@ -32,7 +35,7 @@ object Server {
             routing {
                 RabbitService()
                     .queueForPrintServer()
-                    .listenForPrintServer()
+                    .listenForPrintServer(Repositories.logRepository)
 
                 post("/print") {
                     try {
@@ -42,6 +45,19 @@ object Server {
                     } catch (ex: Exception) {
                         call.respond(HttpStatusCode.BadRequest, ex.message!!)
                     }
+                }
+
+                get("/getStatus") {
+                    try {
+                        val id = call.request.queryParameters["id"]
+                        val log = Actions.getStatus(UUID.fromString(id))
+                        call.respond(HttpStatusCode.OK, log)
+                    } catch (ex: LogNotFoundException) {
+                        call.respond(HttpStatusCode.NotFound, ex.message)
+                    } catch (ex: Exception) {
+                        call.respond(HttpStatusCode.InternalServerError, ex.message!!)
+                    }
+
                 }
             }
         }

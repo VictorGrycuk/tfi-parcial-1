@@ -3,6 +3,8 @@ package service.infrastructure.outbound.rabbitmq
 import com.rabbitmq.client.CancelCallback
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DeliverCallback
+import service.infrastructure.data.LogRepository
+import service.infrastructure.inbound.dto.PrintLog
 
 class RabbitService {
     private val connectionFactory: ConnectionFactory = ConnectionFactory()
@@ -29,9 +31,10 @@ class RabbitService {
         return this
     }
 
-    fun listenForPrintServer() {
-        val deliverCallback = DeliverCallback { consumerTag, message ->
-            println(String(message.body))
+    fun listenForPrintServer(logRepository: LogRepository) {
+        val deliverCallback = DeliverCallback { _, message ->
+            val data = String(message.body)
+            logRepository.store(PrintLog.fromJson(data))
         }
         val cancelCallback = CancelCallback { consumerTag -> print("Cancelled: $consumerTag") }
 

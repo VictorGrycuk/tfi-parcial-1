@@ -1,6 +1,7 @@
 package service.application.action
 
 import service.domain.Document
+import service.infrastructure.outbound.dto.PrintLog
 import service.infrastructure.outbound.exceptions.UnknownPrintException
 import java.time.Instant
 import java.time.ZoneOffset
@@ -16,6 +17,6 @@ class PrintDocument {
         val timestamp = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             .withZone(ZoneOffset.UTC)
             .format(Instant.now())
-        return "OK,$timestamp,${document.filename}"
+        return PrintLog(id = document.id, result = "OK", timestamp = timestamp, filename = document.filename).toJson()
     }
 }
