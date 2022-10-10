@@ -13,6 +13,7 @@ import io.ktor.server.netty.*
 import service.domain.ServerInterface
 import service.infrastructure.inbound.exceptions.LogNotFoundException
 import service.infrastructure.inbound.dto.PrintRequest
+import service.infrastructure.inbound.dto.QueuedResponse
 import service.infrastructure.outbound.rabbitmq.RabbitService
 import service.modules.Actions
 import service.modules.Repositories
@@ -40,7 +41,7 @@ object Server {
                 post("/print") {
                     try {
                         val id = Actions.print(call.receive<PrintRequest>().toDocument())
-                        call.respond(HttpStatusCode.Accepted, "Document queued as id $id")
+                        call.respond(HttpStatusCode.Accepted, QueuedResponse(id).toJson())
 
                     } catch (ex: Exception) {
                         call.respond(HttpStatusCode.BadRequest, ex.message!!)
