@@ -1,3 +1,3 @@
-package service.infrastructure.inbound.dto
+package service.infrastructure.inbound.exceptions
 
 class InvalidFilenameException(override val message: String) : Throwable()
