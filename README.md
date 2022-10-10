@@ -30,13 +30,9 @@
 Endpoint: `localhost:8080/print`
 ```json
 {
-
-    "content": "byte array del archivo",
-
-    "priority": 1,
-
-    "filename": "nombre de archivo"
-
+  "content":"byte array del archivo",
+  "priority":1,
+  "filename":"nombre de archivo"
 }
 ```
 
